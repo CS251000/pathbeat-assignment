@@ -1,25 +1,38 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import MovieCard from './Components/MovieCard';
+import MovieDetail from './Components/MovieDetail';
+import axios from 'axios';
+import './App.css'
 
-function App() {
+const App = () => {
+  const [movies, setMovies] = React.useState([]);
+
+  React.useEffect(() => {
+    axios.get('http://localhost:5500/movies')
+      .then(response => {
+        setMovies(response.data);
+      });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="container">
+              <h1 className="title">Movie Homepage</h1>
+              {movies.map(movie => (
+                <MovieCard key={movie._id} movie={movie} />
+              ))}
+            </div>
+          }
+        />
+        <Route path="/movies/:id" element={<MovieDetail />} />
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
